@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabarito - Fase 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: #060a0f;
+            color: #e7eef2;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Painel Lateral com Scroll */
+        .sidebar {
+            width: 450px;
+            background: #0c1219;
+            border-right: 1px solid #1c2b35;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #00ffcc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        h1 span { color: #ffb200; }
+
+        p {
+            font-size: 0.95rem;
+            color: #a0b0ba;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        /* Caixa de Gabarito Matemático */
+        .math-box {
+            background: #0a0e14;
+            border: 1px solid #24333d;
+            border-left: 3px solid #ffb200;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 2px;
+        }
+
+        .math-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #ffb200;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .formula {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #c6d2d8;
+            background: #060a0f;
+            padding: 10px;
+            border: 1px dashed #1c2b35;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .formula .highlight { color: #00ffcc; }
+        .formula .result { color: #ffb200; font-weight: bold; }
+
+        /* Botão */
+        .btn-next {
+            background: transparent;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 18px;
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            margin-top: auto;
+            display: block;
+        }
+
+        .btn-next:hover {
+            background: #00ffcc;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+        }
+
+        /* Área do Mapa */
+        #map {
+            flex: 1;
+            background: #060a0f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="eyebrow">Resolução do Sistema</div>
+        <h1>CD Master: <span>Jundiaí</span></h1>
+        
+        <p>A matemática é implacável. Ao posicionar as coordenadas em um plano cartesiano, o ponto de equilíbrio geométrico exato (Baricentro) entre São Paulo, Itu e Amparo recai sobre o município de <b>Jundiaí</b>.</p>
+
+        <div class="math-box">
+            <div class="math-title">/ Gabarito Matemático</div>
+            
+            <p style="font-size: 0.85rem; color: #888;">O Baricentro de um triângulo é a média aritmética das coordenadas de seus vértices.</p>
+            
+            <div class="formula">
+                > EIXO Y (Latitude):<br>
+                Y = (Y1 + Y2 + Y3) / 3<br>
+                Y = (-23.55 + -23.26 + -22.70) / 3<br>
+                Y = -69.51 / 3 = <span class="result">-23.17</span>
+            </div>
+
+            <div class="formula">
+                > EIXO X (Longitude):<br>
+                X = (X1 + X2 + X3) / 3<br>
+                X = (-46.63 + -47.29 + -46.76) / 3<br>
+                X = -140.68 / 3 = <span class="result">-46.89</span>
+            </div>
+        </div>
+
+        <p>Este é o cenário ideal em um mundo teórico bidimensional contínuo. Mas e se a demanda não for igual em todas as cidades?</p>
+
+        <a href="02_desafio2.html" class="btn-next">Próxima Fase: Expansão >></a>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+        // Mapa centrado no Baricentro
+        var map = L.map('map').setView([-23.17, -46.89], 9);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Coordenadas
+        var sp = [-23.5505, -46.6333];
+        var itu = [-23.2642, -47.2993];
+        var amparo = [-22.7011, -46.7647];
+        var jundiai = [-23.17, -46.89];
+
+        // Plota as cidades originais (Ciano)
+        var cidades = [
+            { nome: "São Paulo", coord: sp },
+            { nome: "Itu", coord: itu },
+            { nome: "Amparo", coord: amparo }
+        ];
+
+        cidades.forEach(function(cidade) {
+            L.circleMarker(cidade.coord, {
+                color: '#00a8ff',
+                fillColor: '#00a8ff',
+                fillOpacity: 0.8,
+                radius: 6
+            }).addTo(map).bindPopup(cidade.nome);
+
+            // Linhas de convergência até o baricentro
+            L.polyline([cidade.coord, jundiai], {
+                color: '#444',
+                weight: 1.5,
+                dashArray: '5, 5',
+                opacity: 0.6
+            }).addTo(map);
+        });
+
+        // Plota o Baricentro (Amarelo Neon) com raio maior
+        L.circleMarker(jundiai, {
+            color: '#ffb200',
+            fillColor: '#ffb200',
+            fillOpacity: 1,
+            radius: 10,
+            weight: 3
+        }).addTo(map).bindPopup("<b>CD Master: Jundiaí</b><br>O Baricentro Perfeito").openPopup();
+
+        // Efeito de pulso no centro logístico (Círculo estático maior por trás)
+        L.circleMarker(jundiai, {
+            color: '#ffb200',
+            fillColor: 'transparent',
+            radius: 25,
+            weight: 1,
+            opacity: 0.5
+        }).addTo(map);
+
+    </script>
+</body>
+</html>
