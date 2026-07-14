@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Desafio 5 - Rede de Custos Real</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Chakra Petch', sans-serif; display: flex; height: 100vh; background: #060a0f; color: #e7eef2; }
+        .sidebar { width: 450px; padding: 30px; background: #0c1219; z-index: 1000; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+        h1 { font-size: 1.6rem; margin-bottom: 15px; color: #fff; }
+        h1 span { color: #00ffcc; }
+        #map { flex: 1; }
+        .node-label { font-size: 16px; font-weight: bold; color: #00ffcc; }
+        .cost-label { background: rgba(0,0,0,0.8); color: #ffb200; border: 2px solid #ffb200; padding: 2px 6px; font-weight: bold; font-size: 14px; border-radius: 4px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #060a0f; border: 1px solid #444; color: #00ffcc; text-align: center; font-size: 1.1rem; }
+        button { width: 100%; padding: 15px; background: #00ffcc; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>Operação: <span>Otimização de Malha Global</span></h1>
+        <p>A teoria de Valence (V) foi o início. Agora, considere <b>B, G e T</b> na malha.</p>
+        <p>Qual o melhor Hub: <b>V, L, B, G ou T</b>?</p>
+        <input type="text" id="resposta" placeholder="Digite a letra do Hub">
+        <button onclick="validar()">Validar Decisão</button>
+        <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
+    </div>
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map', { zoomControl: false }).setView([46, 5], 6);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        const nodes = {
+            'V': [45.0, 5.1], 'L': [45.7, 4.8], 'B': [44.8, -0.5], 'G': [46.2, 6.1], 'T': [43.6, 1.4],
+            'P': [48.8, 2.3], 'M': [40.4, -3.7], 'U': [48.1, 11.5], 'R': [41.9, 12.4]
+        };
+
+        const edges = [
+            ['V','P',45], ['V','M',35], ['V','U',55], ['V','R',45],
+            ['L','P',25], ['L','M',40], ['L','U',40], ['L','R',25],
+            ['B','P',50], ['B','M',30], ['B','U',60], ['B','R',35],
+            ['G','P',55], ['G','M',50], ['G','U',30], ['G','R',50],
+            ['T','P',60], ['T','M',25], ['T','U',65], ['T','R',40]
+        ];
+
+        edges.forEach(e => {
+            L.polyline([nodes[e[0]], nodes[e[1]]], { color: '#ffb200', weight: 2, opacity: 0.6 }).addTo(map);
+            L.marker([(nodes[e[0]][0] + nodes[e[1]][0])/2, (nodes[e[0]][1] + nodes[e[1]][1])/2], {
+                icon: L.divIcon({ className: 'cost-label', html: e[2] })
+            }).addTo(map);
+        });
+
+        Object.keys(nodes).forEach(n => {
+            L.circleMarker(nodes[n], { radius: 6, color: '#00ffcc', fillColor: '#00ffcc', fillOpacity: 1 }).addTo(map);
+            L.marker(nodes[n], { icon: L.divIcon({ className: 'node-label', html: n, iconAnchor: [-10, 20] }) }).addTo(map);
+        });
+
+        function validar() {
+            if(document.getElementById('resposta').value.toUpperCase() === 'L') {
+                // Redirecionamento corrigido para a página de resultado do desafio 5
+                window.location.href = "05_resultado5.html";
+            } else {
+                document.getElementById('feedback').innerText = "Incorreto. Lyon (L) permanece como o Hub de menor custo total.";
+                document.getElementById('feedback').style.color = "#ff4d4d";
+            }
+        }
+    </script>
+</body>
+</html>
