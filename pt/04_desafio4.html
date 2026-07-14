@@ -93,6 +93,8 @@
             if(rota === "A-B-C-E-D-F" && custo === 110) {
                 fb.innerHTML = "SUCESSO! Otimização perfeita. O caminho 110 é o custo mínimo absoluto.";
                 fb.style.color = "#00ffcc";
+                // Este comando faz ir para a página de resultado automaticamente
+                window.location.href = "04_resultado4.html";
             } else {
                 fb.innerHTML = "FALHA. Revise os pesos das arestas. Existe um caminho mais eficiente.";
                 fb.style.color = "#ff4d4d";
