@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer Key - Phase 3</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Chakra Petch', sans-serif; background-color: #060a0f; color: #e7eef2; display: flex; height: 100vh; overflow: hidden; }
+
+        .sidebar { width: 480px; background: #0c1219; border-right: 1px solid #1c2b35; padding: 30px; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.5); z-index: 10; overflow-y: auto; }
+        .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #00ffcc; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        h1 { font-size: 1.8rem; color: #ffffff; margin-bottom: 20px; }
+        h1 span { color: #ffb200; }
+        p { font-size: 0.95rem; color: #a0b0ba; line-height: 1.5; margin-bottom: 15px; }
+
+        .math-box { background: #0a0e14; border: 1px solid #24333d; border-left: 3px solid #ffb200; padding: 20px; margin-bottom: 25px; }
+        .math-title { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #ffb200; margin-bottom: 15px; text-transform: uppercase; }
+        .formula { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #c6d2d8; background: #060a0f; padding: 10px; border: 1px dashed #1c2b35; margin-bottom: 15px; line-height: 1.6; }
+        .result { color: #ffb200; font-weight: bold; }
+
+        .btn-next { background: transparent; border: 1px solid #00ffcc; color: #00ffcc; padding: 18px; font-family: 'Chakra Petch', sans-serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s ease; text-decoration: none; text-align: center; margin-top: auto; display: block; }
+        .btn-next:hover { background: #00ffcc; color: #000; box-shadow: 0 0 20px rgba(0, 255, 204, 0.4); }
+        #map { flex: 1; background: #060a0f; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="eyebrow">System Resolution</div>
+        <h1>Master DC: <span>Valence (France)</span></h1>
+        
+        <p>Physics and mathematics agree: the center of gravity is pulled by the bodies of greater mass. Notice on the map how Paris and Rome (larger circles) "pulled" the Distribution Center toward southeastern France.</p>
+
+        <div class="math-box">
+            <div class="math-title">/ Answer Key: Weber Problem</div>
+            <div class="formula">
+                > Y-AXIS (Latitude):<br>
+                Y = 450.05 / 10 = <span class="result">45.00</span>
+            </div>
+            <div class="formula">
+                > X-AXIS (Longitude):<br>
+                X = 51.05 / 10 = <span class="result">5.10</span>
+            </div>
+        </div>
+
+        <a href="04_desafio4en.html" class="btn-next">Go to Challenge 4 >></a>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([45.00, 5.10], 5);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        var valence = [45.00, 5.10];
+        var cities = [
+            { name: "Paris", coord: [48.85, 2.35], weight: 4 },
+            { name: "Madrid", coord: [40.41, -3.70], weight: 2 },
+            { name: "Munich", coord: [48.13, 11.58], weight: 1 },
+            { name: "Rome", coord: [41.90, 12.49], weight: 3 }
+        ];
+
+        cities.forEach(function(city) {
+            L.circleMarker(city.coord, { color: '#00a8ff', fillColor: '#00a8ff', fillOpacity: 0.6, radius: city.weight * 4 }).addTo(map).bindPopup(`<b>${city.name}</b>`);
+            L.polyline([city.coord, valence], { color: '#444', weight: city.weight, dashArray: '5, 5', opacity: 0.6 }).addTo(map);
+        });
+
+        L.circleMarker(valence, { color: '#ffb200', fillColor: '#ffb200', fillOpacity: 1, radius: 10, weight: 3 }).addTo(map).bindPopup("<b>Master DC: Valence (France)</b>").openPopup();
+    </script>
+</body>
+</html>
