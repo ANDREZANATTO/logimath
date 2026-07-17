@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>系统校准 - 第一阶段</title>
+    <title>Gabarito - Fase 1</title>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -19,6 +19,7 @@
             overflow: hidden;
         }
 
+        /* Painel Lateral com Scroll */
         .sidebar {
             width: 450px;
             background: #0c1219;
@@ -46,6 +47,7 @@
             margin-bottom: 20px;
             line-height: 1.2;
         }
+
         h1 span { color: #ffb200; }
 
         p {
@@ -55,6 +57,7 @@
             margin-bottom: 15px;
         }
 
+        /* Caixa de Gabarito Matemático */
         .math-box {
             background: #0a0e14;
             border: 1px solid #24333d;
@@ -86,6 +89,7 @@
         .formula .highlight { color: #00ffcc; }
         .formula .result { color: #ffb200; font-weight: bold; }
 
+        /* Botão */
         .btn-next {
             background: transparent;
             border: 1px solid #00ffcc;
@@ -109,45 +113,50 @@
             box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
         }
 
-        #map { flex: 1; background: #060a0f; }
+        /* Área do Mapa */
+        #map {
+            flex: 1;
+            background: #060a0f;
+        }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="eyebrow">系统解析结果</div>
-        <h1>主配送中心: <span>容迪亚伊 (Jundiaí)</span></h1>
+        <div class="eyebrow">Resolução do Sistema</div>
+        <h1>CD Master: <span>Jundiaí</span></h1>
         
-        <p>数学计算是严谨的。通过将坐标放置在笛卡尔平面上，圣保罗、伊图和安帕鲁之间的几何精确平衡点（重心）落在了<b>容迪亚伊 (Jundiaí)</b>市。</p>
+        <p>A matemática é implacável. Ao posicionar as coordenadas em um plano cartesiano, o ponto de equilíbrio geométrico exato (Baricentro) entre São Paulo, Itu e Amparo recai sobre o município de <b>Jundiaí</b>.</p>
 
         <div class="math-box">
-            <div class="math-title">/ 数学验算</div>
+            <div class="math-title">/ Gabarito Matemático</div>
             
-            <p style="font-size: 0.85rem; color: #888;">三角形的重心是其顶点坐标的算术平均值。</p>
+            <p style="font-size: 0.85rem; color: #888;">O Baricentro de um triângulo é a média aritmética das coordenadas de seus vértices.</p>
             
             <div class="formula">
-                > Y 轴 (纬度):<br>
+                > EIXO Y (Latitude):<br>
                 Y = (Y1 + Y2 + Y3) / 3<br>
                 Y = (-23.55 + -23.26 + -22.70) / 3<br>
                 Y = -69.51 / 3 = <span class="result">-23.17</span>
             </div>
 
             <div class="formula">
-                > X 轴 (经度):<br>
+                > EIXO X (Longitude):<br>
                 X = (X1 + X2 + X3) / 3<br>
                 X = (-46.63 + -47.29 + -46.76) / 3<br>
                 X = -140.68 / 3 = <span class="result">-46.89</span>
             </div>
         </div>
 
-        <p>这是二维连续理论模型中的理想场景。但如果各城市的物流需求不相等呢？</p>
+        <p>Este é o cenário ideal em um mundo teórico bidimensional contínuo. Mas e se a demanda não for igual em todas as cidades?</p>
 
-        <a href="02_desafio2cn.html" class="btn-next">下一阶段：扩展 >></a>
+        <a href="02_desafio2.html" class="btn-next">Próxima Fase: Expansão >></a>
     </div>
 
     <div id="map"></div>
 
     <script>
+        // Mapa centrado no Baricentro
         var map = L.map('map').setView([-23.17, -46.89], 9);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -155,15 +164,17 @@
             maxZoom: 18
         }).addTo(map);
 
+        // Coordenadas
         var sp = [-23.5505, -46.6333];
         var itu = [-23.2642, -47.2993];
         var amparo = [-22.7011, -46.7647];
         var jundiai = [-23.17, -46.89];
 
+        // Plota as cidades originais (Ciano)
         var cidades = [
-            { nome: "圣保罗 (São Paulo)", coord: sp },
-            { nome: "伊图 (Itu)", coord: itu },
-            { nome: "安帕鲁 (Amparo)", coord: amparo }
+            { nome: "São Paulo", coord: sp },
+            { nome: "Itu", coord: itu },
+            { nome: "Amparo", coord: amparo }
         ];
 
         cidades.forEach(function(cidade) {
@@ -174,6 +185,7 @@
                 radius: 6
             }).addTo(map).bindPopup(cidade.nome);
 
+            // Linhas de convergência até o baricentro
             L.polyline([cidade.coord, jundiai], {
                 color: '#444',
                 weight: 1.5,
@@ -182,14 +194,16 @@
             }).addTo(map);
         });
 
+        // Plota o Baricentro (Amarelo Neon) com raio maior
         L.circleMarker(jundiai, {
             color: '#ffb200',
             fillColor: '#ffb200',
             fillOpacity: 1,
             radius: 10,
             weight: 3
-        }).addTo(map).bindPopup("<b>主配送中心: 容迪亚伊 (Jundiaí)</b><br>完美几何重心").openPopup();
+        }).addTo(map).bindPopup("<b>CD Master: Jundiaí</b><br>O Baricentro Perfeito").openPopup();
 
+        // Efeito de pulso no centro logístico (Círculo estático maior por trás)
         L.circleMarker(jundiai, {
             color: '#ffb200',
             fillColor: 'transparent',
@@ -197,6 +211,7 @@
             weight: 1,
             opacity: 0.5
         }).addTo(map);
+
     </script>
 </body>
 </html>
