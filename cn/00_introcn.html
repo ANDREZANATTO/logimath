@@ -2,20 +2,343 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>LogiMath - 简介</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogiMath - 任务简报</title>
     <style>
-        body { font-family: 'Chakra Petch', sans-serif; background: #060a0f; color: #fff; padding: 50px; display: flex; justify-content: center; }
-        .card { max-width: 600px; background: #0c1219; padding: 40px; border: 1px solid #00ffcc; text-align: center; }
-        h1 { color: #00ffcc; }
-        p { color: #a0b0ba; line-height: 1.6; margin-top: 20px; }
-        .btn-start { display: inline-block; margin-top: 30px; padding: 15px 30px; background: #00ffcc; color: #000; text-decoration: none; font-weight: bold; border-radius: 4px; }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Chakra+Petch:wght@400;500;600;700&display=swap');
+
+        :root{
+            --bg: #060a0f;
+            --panel: #0c1219;
+            --panel-border: #1c2b35;
+            --cyan: #00ffcc;
+            --cyan-dim: rgba(0,255,204,0.35);
+            --amber: #ffb200;
+            --text: #e7eef2;
+            --muted: #5d7079;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #routeCanvas{
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        body::before{
+            content:'';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,255,204,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,204,0.035) 1px, transparent 1px);
+            background-size: 46px 46px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after{
+            content:'';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, var(--bg) 78%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .stage{
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(14px);
+            animation: reveal 0.8s ease forwards;
+        }
+
+        @keyframes reveal{
+            to{ opacity: 1; transform: translateY(0); }
+        }
+
+        .terminal-container {
+            background: linear-gradient(180deg, rgba(14,20,27,0.92), rgba(9,13,18,0.96));
+            border: 1px solid var(--panel-border);
+            border-left: 4px solid var(--cyan);
+            border-radius: 4px;
+            padding: 44px 52px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow:
+                0 0 0 1px rgba(0,255,204,0.05),
+                0 30px 80px -20px rgba(0,0,0,0.75),
+                0 0 60px -15px rgba(0,255,204,0.1);
+            position: relative;
+        }
+
+        .corner{
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--cyan);
+            opacity: 0.7;
+        }
+        .corner.tr{ top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .corner.br{ bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        .terminal-container::after {
+            content: 'SYS.REQ. // 已授权';
+            position: absolute;
+            top: -11px;
+            left: 40px;
+            background: var(--bg);
+            color: var(--amber);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            padding: 0 10px;
+            letter-spacing: 2.5px;
+        }
+
+        h1 {
+            color: #ffffff;
+            text-transform: uppercase;
+            font-family: 'Chakra Petch', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        .subtitle {
+            color: var(--cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtitle .dot{
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 6px var(--cyan);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse{
+            0%, 100%{ opacity: 1; }
+            50%{ opacity: 0.3; }
+        }
+
+        .content {
+            line-height: 1.8;
+            font-size: 1.02rem;
+            margin-bottom: 36px;
+            color: #c3ccd2;
+        }
+        .content p { margin-bottom: 16px; }
+        .highlight {
+            color: var(--cyan);
+            font-weight: 600;
+            text-shadow: 0 0 12px rgba(0,255,204,0.3);
+        }
+
+        .data-box {
+            background: #05090c;
+            border: 1px dashed #26333d;
+            border-radius: 3px;
+            padding: 18px 22px;
+            margin-top: 22px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.9;
+        }
+        .data-box span { color: var(--cyan); }
+
+        .btn-start {
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(0, 255, 204, 0.06);
+            color: var(--cyan);
+            text-decoration: none;
+            padding: 17px 30px;
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            border: 1px solid var(--cyan);
+            border-radius: 3px;
+            transition: color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-start::before{
+            content:'';
+            position: absolute;
+            top: 0; left: -40%;
+            width: 40%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+        }
+
+        .btn-start:hover {
+            background: var(--cyan);
+            color: #04100d;
+            box-shadow: 0 8px 28px -8px rgba(0,255,204,0.45), 0 0 24px rgba(0,255,204,0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-start:hover::before{ left: 120%; }
+
+        .btn-start:active{ transform: translateY(0) scale(0.99); }
+
+        .btn-start .arrow{
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        @media (max-width: 560px){
+            .terminal-container{ padding: 32px 26px; }
+            .terminal-container::after{ left: 24px; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>欢迎来到 LogiMath</h1>
-        <p>在这个物流优化挑战中，您将学习如何使用数学方法寻找最高效的网络枢纽。</p>
-        <a href="01_desafio1cn.html" class="btn-start">开始挑战 >></a>
+
+    <canvas id="routeCanvas"></canvas>
+
+    <div class="stage">
+        <div class="terminal-container">
+            <span class="corner tr"></span>
+            <span class="corner br"></span>
+
+            <h1>行动简报</h1>
+            <span class="subtitle"><span class="dot"></span>首席工程师访问 // 1级权限</span>
+
+            <div class="content">
+                <p>您刚刚接管了一家跨国分销公司全球物流运营的主管职位。董事会已批准一项价值 5 亿雷亚尔的项目，旨在优化我们在四大洲的交付网络。</p>
+
+                <p>您的目标不是单独管理每辆卡车，而是利用<span class="highlight">数学建模和图论</span>来确定我们的主配送中心（CDs）应建设的确切位置。</p>
+
+                <p>基于直觉的决策在燃油和时间浪费方面将花费数百万。从现在起，您的工作工具就是应用数学。</p>
+
+                <div class="data-box">
+                    &gt; 主要目标：找到数学最优点（物流枢纽）。<br>
+                    &gt; 约束条件：最小化系统总成本函数。<br>
+                    &gt; 系统状态：<span>准备启动模拟。</span>
+                </div>
+            </div>
+
+            <a href="01_desafio1cn.html" class="btn-start">启动模拟 <span class="arrow">&gt;&gt;</span></a>
+        </div>
     </div>
+
+    <script>
+        (function(){
+            var canvas = document.getElementById('routeCanvas');
+            var ctx = canvas.getContext('2d');
+            var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var w, h, nodes = [];
+            var NODE_COUNT = 30;
+            var MAX_DIST = 170;
+
+            function resize(){
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function makeNodes(){
+                nodes = [];
+                for(var i=0;i<NODE_COUNT;i++){
+                    nodes.push({
+                        x: Math.random()*w,
+                        y: Math.random()*h,
+                        vx: (Math.random()-0.5)*0.15,
+                        vy: (Math.random()-0.5)*0.15,
+                        pulse: Math.random()*Math.PI*2
+                    });
+                }
+            }
+            makeNodes();
+
+            function draw(){
+                ctx.clearRect(0,0,w,h);
+
+                for(var i=0;i<nodes.length;i++){
+                    var n = nodes[i];
+                    if(!reduced){
+                        n.x += n.vx;
+                        n.y += n.vy;
+                        n.pulse += 0.02;
+                        if(n.x < 0 || n.x > w) n.vx *= -1;
+                        if(n.y < 0 || n.y > h) n.vy *= -1;
+                    }
+                }
+
+                for(var a=0;a<nodes.length;a++){
+                    for(var b=a+1;b<nodes.length;b++){
+                        var dx = nodes[a].x - nodes[b].x;
+                        var dy = nodes[a].y - nodes[b].y;
+                        var dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < MAX_DIST){
+                            var alpha = (1 - dist/MAX_DIST) * 0.35;
+                            ctx.strokeStyle = 'rgba(0,255,204,' + alpha + ')';
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[a].x, nodes[a].y);
+                            ctx.lineTo(nodes[b].x, nodes[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                for(var i=0;i<nodes.length;i++){
+                    var n = nodes[i];
+                    var r = 1.4 + Math.sin(n.pulse)*0.6;
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, r, 0, Math.PI*2);
+                    ctx.fillStyle = 'rgba(0,255,204,0.55)';
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        })();
+    </script>
 </body>
 </html>
