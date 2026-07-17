@@ -1,1 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3 - The Volume Factor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: #05080c;
+            color: #e7eef2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0, 255, 204, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 204, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .terminal {
+            background: #0c1219;
+            border: 1px solid #1c2b35;
+            border-top: 3px solid #00ffcc;
+            padding: 40px;
+            border-radius: 4px;
+            max-width: 680px;
+            width: 90%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0, 255, 204, 0.1);
+        }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #ffb200;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        h1 span { color: #00ffcc; }
+
+        p {
+            font-size: 0.95rem;
+            color: #a0b0ba;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .data-box {
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid #1c2b35;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #c6d2d8;
+            margin-bottom: 20px;
+        }
+
+        .data-box ul { list-style: none; margin-top: 15px; }
+        .data-box li { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px; 
+            border-bottom: 1px dashed #24333d; 
+            padding-bottom: 8px; 
+        }
+        .data-box li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .cidade-nome { font-weight: bold; color: #ffffff; width: 80px;}
+        .coord-text { color: #00ffcc; }
+        .peso-text { background: #ffb200; color: #000; padding: 2px 6px; border-radius: 2px; font-weight: bold; font-size: 0.75rem; }
+
+        .btn-hint {
+            background: transparent;
+            border: 1px dashed #5d7079;
+            color: #a0b0ba;
+            padding: 8px 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-hint:hover {
+            border-color: #ffb200;
+            color: #ffb200;
+        }
+
+        .hint-box {
+            display: none;
+            background: rgba(255, 178, 0, 0.1);
+            border-left: 3px solid #ffb200;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #ffb200;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-field label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #ffb200;
+            margin-bottom: 5px;
+        }
+
+        .input-field input {
+            background: #060a0f;
+            border: 1px solid #24333d;
+            color: #00ffcc;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            padding: 15px;
+            border-radius: 2px;
+            outline: none;
+            transition: border-color 0.3s;
+            text-align: center;
+        }
+
+        .input-field input:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+
+        #msg-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 20px;
+            min-height: 48px;
+        }
+
+        .erro { color: #ff4d4d; border: 1px solid #ff4d4d; background: rgba(255, 77, 77, 0.1); }
+        .sucesso { color: #00ffcc; border: 1px solid #00ffcc; background: rgba(0, 255, 204, 0.1); }
+
+        .btn-action {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 18px;
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            background: #00ffcc;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal">
+        <div class="eyebrow">Simulation Level 3</div>
+        <h1>The <span>Volume Factor</span></h1>
+        
+        <p>Reality is not symmetrical. Our European distribution network has highly disproportionate demand. Some cities require a much higher daily flow of trucks than others.</p>
+        <p><b>Your mission:</b> Calculate the ideal coordinate for the Master DC, knowing that the company's strategic goal is to minimize the total mileage traveled by the <b>entire combined fleet</b>.</p>
+
+        <div class="data-box">
+            > DATA COLLECTED (Europe):
+            <ul>
+                <li>
+                    <span class="cidade-nome">PARIS</span> 
+                    <span class="coord-text">LAT: 48.85 | LON: 2.35</span>
+                    <span class="peso-text">4 TRIPS/DAY</span>
+                </li>
+                <li>
+                    <span class="cidade-nome">MADRID</span> 
+                    <span class="coord-text">LAT: 40.41 | LON: -3.70</span>
+                    <span class="peso-text">2 TRIPS/DAY</span>
+                </li>
+                <li>
+                    <span class="cidade-nome">MUNICH</span> 
+                    <span class="coord-text">LAT: 48.13 | LON: 11.58</span>
+                    <span class="peso-text">1 TRIP/DAY</span>
+                </li>
+                <li>
+                    <span class="cidade-nome">ROME</span> 
+                    <span class="coord-text">LAT: 41.90 | LON: 12.49</span>
+                    <span class="peso-text">3 TRIPS/DAY</span>
+                </li>
+            </ul>
+        </div>
+
+        <button class="btn-hint" onclick="mostrarDica()">[ Request System Support ]</button>
+
+        <div class="hint-box" id="hint-box">
+            > SUPPORT SYSTEM ACTIVATED:<br><br>
+            Simple arithmetic mean does not work when weights differ. Cities with higher frequency attract the center of gravity towards them.<br><br>
+            <b>Hint:</b> Try multiplying the coordinate of each city by its respective number of daily trips. Then, sum all results and divide by the <b>total number of daily trips for the fleet</b>.
+        </div>
+
+        <div class="input-group">
+            <div class="input-field">
+                <label>> ENTER LATITUDE (y)</label>
+                <input type="number" id="input-lat" step="0.01" placeholder="Ex: 44.00">
+            </div>
+            <div class="input-field">
+                <label>> ENTER LONGITUDE (x)</label>
+                <input type="number" id="input-lon" step="0.01" placeholder="Ex: 4.00">
+            </div>
+        </div>
+
+        <div id="msg-status">AWAITING CALCULATION...</div>
+
+        <button class="btn-action" onclick="validarCoordenadas()">Process Coordinates</button>
+    </div>
+
+    <script>
+        function mostrarDica() {
+            document.getElementById('hint-box').style.display = 'block';
+        }
+
+        function validarCoordenadas() {
+            const targetLat = 45.00;
+            const targetLon = 5.10;
+            const tolerancia = 0.05;
+
+            const mediaSimplesLat = 44.82;
+            const mediaSimplesLon = 3.18;
+
+            let lat = parseFloat(document.getElementById('input-lat').value);
+            let lon = parseFloat(document.getElementById('input-lon').value);
+            let msg = document.getElementById('msg-status');
+
+            if (isNaN(lat) || isNaN(lon)) {
+                msg.className = 'erro';
+                msg.innerHTML = "[ERROR] Please enter numeric values in both fields.";
+                return;
+            }
+
+            let difLat = Math.abs(lat - targetLat);
+            let difLon = Math.abs(lon - targetLon);
+
+            if (Math.abs(lat - mediaSimplesLat) <= 0.1 && Math.abs(lon - mediaSimplesLon) <= 0.1) {
+                msg.className = 'erro';
+                msg.innerHTML = "[WASTE ALERT] You used the simple mean! This ignores cities requiring more trucks. Final fuel cost will be massive. Request system support.";
+                return;
+            }
+
+            if (difLat <= tolerancia && difLon <= tolerancia) {
+                msg.className = 'sucesso';
+                msg.innerHTML = "[SUCCESS] Fleet calculation validated! The logistics center of mass has been established. Redirecting...";
+                
+                setTimeout(function() {
+                    window.location.href = '03_resultado3en.html';
+                }, 2500);
+            } else {
+                msg.className = 'erro';
+                msg.innerHTML = "[CRITICAL FAILURE] Positioning error. Review your calculations or request system support above.";
+            }
+        }
+    </script>
+</body>
+</html>
