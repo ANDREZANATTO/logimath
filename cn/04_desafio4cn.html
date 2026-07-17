@@ -69,8 +69,9 @@
         function validar() {
             const rota = document.getElementById('rota').value.toUpperCase().replace(/\s/g, '');
             const custo = parseInt(document.getElementById('custo').value);
-            // 这里根据实际最短路径逻辑进行判断
-            if(rota === "A-B-D-F" && custo === 120) {
+            
+            // Validação mantendo o custo 110 e a rota A-B-C-E-D-F
+            if(rota === "A-B-C-E-D-F" && custo === 110) {
                 window.location.href = "04_resultado4cn.html";
             } else {
                 document.getElementById('feedback').innerHTML = "验证失败，请重新计算。";
