@@ -1,1 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phase 4 - Strategic Routing</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Chakra Petch', sans-serif; display: flex; height: 100vh; background: #060a0f; color: #e7eef2; }
+        .sidebar { width: 450px; padding: 30px; background: #0c1219; z-index: 1000; box-shadow: 2px 0 10px rgba(0,0,0,0.5); overflow-y: auto; }
+        h1 { font-size: 1.6rem; margin-bottom: 20px; color: #fff; }
+        h1 span { color: #00ffcc; }
+        p { font-size: 0.9rem; color: #a0b0ba; margin-bottom: 20px; line-height: 1.6; }
+        #map { flex: 1; position: relative; }
+        .node { position: absolute; width: 45px; height: 45px; background: #00ffcc; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 1001; cursor: pointer; border: 2px solid #fff; }
+        .edge { position: absolute; background: #ffb200; height: 4px; transform-origin: 0 50%; z-index: 1000; }
+        .cost { position: absolute; background: #000; padding: 3px 7px; font-size: 0.85rem; color: #ffb200; border: 1px solid #ffb200; z-index: 1002; border-radius: 4px; pointer-events: none; font-weight: bold; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #060a0f; border: 1px solid #444; color: #00ffcc; font-family: 'JetBrains Mono'; text-align: center; font-size: 1rem; }
+        button { width: 100%; padding: 15px; background: #00ffcc; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; margin-top: 10px; }
+        #feedback { margin-top: 20px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>Operation <span>Export</span></h1>
+        <p>Identify the lowest total cost route from <b>DC (A)</b> to the <b>Port of Sydney (F)</b>.</p>
+        <input type="text" id="rota" placeholder="Ex: A-B-C-E-D-F">
+        <input type="number" id="custo" placeholder="Total Cost">
+        <button onclick="validar()">Validate Minimum Route</button>
+        <p id="feedback"></p>
+    </div>
+    <div id="map"></div>
 
+    <script>
+        var map = L.map('map', { zoomControl: false, dragging: true, scrollWheelZoom: true }).setView([20, 20], 3);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+        const nodeCoords = { 'A': [45, 5], 'B': [55, 30], 'C': [20, 30], 'D': [55, 110], 'E': [20, 110], 'F': [-33, 151] };
+        function draw() {
+            const container = document.getElementById('map');
+            document.querySelectorAll('.node, .edge, .cost').forEach(e => e.remove());
+            const edges = [['A', 'B', 20], ['A', 'C', 50], ['B', 'C', 20], ['B', 'D', 70], ['C', 'E', 30], ['D', 'E', 10], ['E', 'F', 60], ['D', 'F', 30]];
+            edges.forEach(e => {
+                const p1 = map.latLngToContainerPoint(nodeCoords[e[0]]);
+                const p2 = map.latLngToContainerPoint(nodeCoords[e[1]]);
+                const edge = document.createElement('div');
+                edge.className = 'edge';
+                const dx = p2.x - p1.x; const dy = p2.y - p1.y;
+                edge.style.width = Math.sqrt(dx*dx + dy*dy) + 'px';
+                edge.style.top = p1.y + 'px'; edge.style.left = p1.x + 'px';
+                edge.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+                container.appendChild(edge);
+                const c = document.createElement('div');
+                c.className = 'cost'; c.innerText = e[2];
+                c.style.top = (p1.y + p2.y)/2 - 10 + 'px'; c.style.left = (p1.x + p2.x)/2 - 10 + 'px';
+                container.appendChild(c);
+            });
+            Object.keys(nodeCoords).forEach(id => {
+                const p = map.latLngToContainerPoint(nodeCoords[id]);
+                const el = document.createElement('div');
+                el.className = 'node'; el.innerText = id;
+                el.style.top = (p.y - 22) + 'px'; el.style.left = (p.x - 22) + 'px';
+                container.appendChild(el);
+            });
+        }
+        draw(); map.on('moveend', draw);
+        function validar() {
+            const rota = document.getElementById('rota').value.toUpperCase().replace(/\s/g, '');
+            const custo = parseInt(document.getElementById('custo').value);
+            if(rota === "A-B-C-E-D-F" && custo === 110) {
+                window.location.href = "04_resultado4en.html";
+            } else {
+                document.getElementById('feedback').innerHTML = "FAILURE. Review your calculations.";
+                document.getElementById('feedback').style.color = "#ff4d4d";
+            }
+        }
+    </script>
+</body>
+</html>
