@@ -2,32 +2,68 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>阶段 5 - 最终集成</title>
+    <title>第五阶段 - 实际成本网络</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body { font-family: 'Chakra Petch', sans-serif; background: #060a0f; color: #fff; padding: 50px; display: flex; justify-content: center; }
-        .card { max-width: 600px; background: #0c1219; padding: 40px; border: 1px solid #00ffcc; text-align: center; }
-        h1 { color: #00ffcc; }
-        p { color: #a0b0ba; line-height: 1.6; margin-top: 20px; }
-        input { width: 100%; padding: 12px; margin: 20px 0; background: #060a0f; border: 1px solid #444; color: #00ffcc; text-align: center; font-size: 1.1rem; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Chakra Petch', sans-serif; display: flex; height: 100vh; background: #060a0f; color: #e7eef2; }
+        .sidebar { width: 450px; padding: 30px; background: #0c1219; z-index: 1000; box-shadow: 2px 0 10px rgba(0,0,0,0.5); }
+        h1 { font-size: 1.6rem; margin-bottom: 15px; color: #fff; }
+        h1 span { color: #00ffcc; }
+        #map { flex: 1; }
+        .node-label { font-size: 16px; font-weight: bold; color: #00ffcc; }
+        .cost-label { background: rgba(0,0,0,0.8); color: #ffb200; border: 2px solid #ffb200; padding: 2px 6px; font-weight: bold; font-size: 14px; border-radius: 4px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #060a0f; border: 1px solid #444; color: #00ffcc; text-align: center; font-size: 1.1rem; }
         button { width: 100%; padding: 15px; background: #00ffcc; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>阶段 5：最终集成</h1>
-        <p>输入系统的最终集成密钥以完成模拟：</p>
-        <input type="text" id="resposta" placeholder="输入集成密钥">
+    <div class="sidebar">
+        <h1>行动：<span>全球物流网优化</span></h1>
+        <p>瓦朗斯 (V) 只是开始。现在，请考虑网格中的 <b>B、G 和 T</b>。</p>
+        <p>哪个枢纽是最佳选择：<b>V、L、B、G 还是 T</b>？</p>
+        <input type="text" id="resposta" placeholder="输入枢纽字母">
         <button onclick="validar()">验证决策</button>
         <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
     </div>
+    <div id="map"></div>
 
     <script>
+        var map = L.map('map', { zoomControl: false }).setView([46, 5], 6);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        const nodes = {
+            'V': [45.0, 5.1], 'L': [45.7, 4.8], 'B': [44.8, -0.5], 'G': [46.2, 6.1], 'T': [43.6, 1.4],
+            'P': [48.8, 2.3], 'M': [40.4, -3.7], 'U': [48.1, 11.5], 'R': [41.9, 12.4]
+        };
+
+        const edges = [
+            ['V','P',45], ['V','M',35], ['V','U',55], ['V','R',45],
+            ['L','P',25], ['L','M',40], ['L','U',40], ['L','R',25],
+            ['B','P',50], ['B','M',30], ['B','U',60], ['B','R',35],
+            ['G','P',55], ['G','M',50], ['G','U',30], ['G','R',50],
+            ['T','P',60], ['T','M',25], ['T','U',65], ['T','R',40]
+        ];
+
+        edges.forEach(e => {
+            L.polyline([nodes[e[0]], nodes[e[1]]], { color: '#ffb200', weight: 2, opacity: 0.6 }).addTo(map);
+            L.marker([(nodes[e[0]][0] + nodes[e[1]][0])/2, (nodes[e[0]][1] + nodes[e[1]][1])/2], {
+                icon: L.divIcon({ className: 'cost-label', html: e[2] })
+            }).addTo(map);
+        });
+
+        Object.keys(nodes).forEach(n => {
+            L.circleMarker(nodes[n], { radius: 6, color: '#00ffcc', fillColor: '#00ffcc', fillOpacity: 1 }).addTo(map);
+            L.marker(nodes[n], { icon: L.divIcon({ className: 'node-label', html: n, iconAnchor: [-10, 20] }) }).addTo(map);
+        });
+
         function validar() {
-            // Ajuste a lógica conforme o seu desafio
-            if(document.getElementById('resposta').value.toUpperCase() === 'SYNC') {
+            if(document.getElementById('resposta').value.toUpperCase() === 'L') {
+                // Redirecionamento para a página de resultado da fase 5 em chinês
                 window.location.href = "05_resultado5cn.html";
             } else {
-                document.getElementById('feedback').innerText = "错误，请重试。";
+                document.getElementById('feedback').innerText = "不正确。里昂 (L) 仍然是总成本最低的枢纽。";
                 document.getElementById('feedback').style.color = "#ff4d4d";
             }
         }
