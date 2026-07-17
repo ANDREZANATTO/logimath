@@ -2,21 +2,202 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>分析结果 - 阶段 2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统校准结果 - 第二阶段</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
-        body { font-family: 'Chakra Petch', sans-serif; background: #060a0f; color: #fff; padding: 50px; display: flex; justify-content: center; }
-        .card { max-width: 600px; background: #0c1219; padding: 40px; border: 1px solid #00ffcc; text-align: center; }
-        h1 { color: #00ffcc; }
-        p { color: #a0b0ba; line-height: 1.6; margin-top: 20px; }
-        .btn-next { display: inline-block; margin-top: 30px; padding: 15px 30px; background: transparent; border: 2px solid #00ffcc; color: #00ffcc; text-decoration: none; font-weight: bold; text-transform: uppercase; }
-        .btn-next:hover { background: #00ffcc; color: #000; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background-color: #060a0f;
+            color: #e7eef2;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 450px;
+            background: #0c1219;
+            border-right: 1px solid #1c2b35;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+            overflow-y: auto;
+        }
+
+        .eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #00ffcc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        h1 span { color: #ffb200; }
+
+        p {
+            font-size: 0.95rem;
+            color: #a0b0ba;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .math-box {
+            background: #0a0e14;
+            border: 1px solid #24333d;
+            border-left: 3px solid #ffb200;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 2px;
+        }
+
+        .math-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #ffb200;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .formula {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #c6d2d8;
+            background: #060a0f;
+            padding: 10px;
+            border: 1px dashed #1c2b35;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .formula .result { color: #ffb200; font-weight: bold; }
+
+        .btn-next {
+            background: transparent;
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            padding: 18px;
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            margin-top: auto;
+            display: block;
+        }
+
+        .btn-next:hover {
+            background: #00ffcc;
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+        }
+
+        #map { flex: 1; background: #060a0f; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>分析完成</h1>
-        <p>路线优化成功！您已有效减少了物流路径的冗余成本。</p>
-        <a href="03_desafio3cn.html" class="btn-next">进入阶段 3 >></a>
+
+    <div class="sidebar">
+        <div class="eyebrow">系统解析结果</div>
+        <h1>主配送中心: <span>武汉 (Wuhan)</span></h1>
+        
+        <p>数学逻辑可扩展至任意数量的节点。多边形的质心是其 <i>n</i> 个顶点坐标的平均值。在此案例中，精确的物流中心落在了<b>武汉</b>附近，因其作为中国主要的交通枢纽，也被称为“中国芝加哥”。</p>
+
+        <div class="math-box">
+            <div class="math-title">/ 数学验算</div>
+            
+            <p style="font-size: 0.85rem; color: #888;">对于 n=4 个需求相等的节点，我们将坐标总和除以 4。</p>
+            
+            <div class="formula">
+                > Y 轴 (纬度):<br>
+                Y = (Y1 + Y2 + Y3 + Y4) / 4<br>
+                Y = (39.90 + 31.23 + 23.12 + 29.56) / 4<br>
+                Y = 123.81 / 4 = <span class="result">30.95</span>
+            </div>
+
+            <div class="formula">
+                > X 轴 (经度):<br>
+                X = (X1 + X2 + X3 + X4) / 4<br>
+                X = (116.40 + 121.47 + 113.26 + 106.55) / 4<br>
+                X = 457.68 / 4 = <span class="result">114.42</span>
+            </div>
+        </div>
+
+        <p>到目前为止，我们假设所有城市购买的商品数量相同。但如果某个节点需要的卡车数量远多于其他节点，该怎么办呢？</p>
+
+        <a href="03_desafio3cn.html" class="btn-next">下一阶段：加权成本 >></a>
     </div>
+
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([30.95, 114.42], 5);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap',
+            maxZoom: 18
+        }).addTo(map);
+
+        var pequim = [39.90, 116.40];
+        var xangai = [31.23, 121.47];
+        var cantao = [23.12, 113.26];
+        var chongqing = [29.56, 106.55];
+        var wuhan = [30.95, 114.42];
+
+        var cidades = [
+            { nome: "北京 (Pequim)", coord: pequim },
+            { nome: "上海 (Xangai)", coord: xangai },
+            { nome: "广州 (Cantão)", coord: cantao },
+            { nome: "重庆 (Chongqing)", coord: chongqing }
+        ];
+
+        cidades.forEach(function(cidade) {
+            L.circleMarker(cidade.coord, {
+                color: '#00a8ff',
+                fillColor: '#00a8ff',
+                fillOpacity: 0.8,
+                radius: 6
+            }).addTo(map).bindPopup(cidade.nome);
+
+            L.polyline([cidade.coord, wuhan], {
+                color: '#444',
+                weight: 1.5,
+                dashArray: '5, 5',
+                opacity: 0.6
+            }).addTo(map);
+        });
+
+        L.circleMarker(wuhan, {
+            color: '#ffb200',
+            fillColor: '#ffb200',
+            fillOpacity: 1,
+            radius: 10,
+            weight: 3
+        }).addTo(map).bindPopup("<b>主配送中心: 武汉地区</b><br>四边形质心").openPopup();
+
+        L.circleMarker(wuhan, {
+            color: '#ffb200',
+            fillColor: 'transparent',
+            radius: 30,
+            weight: 1,
+            opacity: 0.5
+        }).addTo(map);
+    </script>
 </body>
 </html>
