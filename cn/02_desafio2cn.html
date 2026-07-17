@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>阶段 2 - 成本优化</title>
+    <style>
+        body { font-family: 'Chakra Petch', sans-serif; background: #060a0f; color: #fff; padding: 50px; display: flex; justify-content: center; }
+        .card { max-width: 600px; background: #0c1219; padding: 40px; border: 1px solid #00ffcc; text-align: center; }
+        h1 { color: #00ffcc; }
+        p { color: #a0b0ba; line-height: 1.6; margin-top: 20px; }
+        input { width: 100%; padding: 12px; margin: 20px 0; background: #060a0f; border: 1px solid #444; color: #00ffcc; text-align: center; font-size: 1.1rem; }
+        button { width: 100%; padding: 15px; background: #00ffcc; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>阶段 2：成本效益</h1>
+        <p>输入优化后的路径代码：</p>
+        <input type="text" id="resposta" placeholder="输入路径">
+        <button onclick="validar()">验证决策</button>
+        <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
+    </div>
 
+    <script>
+        function validar() {
+            // Ajuste a lógica da resposta conforme o seu desafio
+            if(document.getElementById('resposta').value.toUpperCase() === 'A-B-C') {
+                window.location.href = "02_resultado2cn.html";
+            } else {
+                document.getElementById('feedback').innerText = "错误，请重试。";
+                document.getElementById('feedback').style.color = "#ff4d4d";
+            }
+        }
+    </script>
+</body>
+</html>
