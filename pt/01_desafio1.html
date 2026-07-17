@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第一阶段 - 三角运算 (计算)</title>
+    <title>Fase 1 - Operação Triângulo (Cálculo)</title>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -111,6 +111,11 @@
             text-align: center;
         }
 
+        .input-field input:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+
         #msg-status {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85rem;
@@ -148,66 +153,71 @@
 <body>
 
     <div class="terminal">
-        <div class="eyebrow">模拟等级 1</div>
-        <h1>三角 <span>行动</span></h1>
+        <div class="eyebrow">Simulação Nível 1</div>
+        <h1>Operação <span>Triângulo</span></h1>
         
-        <p>董事会需要在圣保罗州建设一个主配送中心，以服务三个最大的消费中心。它们之间的需求是严格相等的。</p>
-        <p><b>任务：</b> 使用算术平均坐标计算 <b>重心</b>（几何平衡点）。输入结果以校准系统。</p>
+        <p>A diretoria precisa construir um Centro de Distribuição Master no estado de São Paulo para atender os três maiores polos de consumo. A demanda é rigorosamente igual entre eles.</p>
+        <p><b>Sua missão:</b> Calcule o <b>Baricentro</b> (ponto de equilíbrio geométrico) utilizando a média aritmética simples das coordenadas. Insira os resultados para calibrar o sistema.</p>
 
         <div class="data-box">
-            > GPS 采集数据:
+            > DADOS COLETADOS DO GPS:
             <ul>
-                <li><span class="cidade-nome">圣保罗 (SÃO PAULO)</span> <span class="coord-text">纬度: -23.55 | 经度: -46.63</span></li>
-                <li><span class="cidade-nome">伊图 (ITU)</span> <span class="coord-text">纬度: -23.26 | 经度: -47.29</span></li>
-                <li><span class="cidade-nome">安帕鲁 (AMPARO)</span> <span class="coord-text">纬度: -22.70 | 经度: -46.76</span></li>
+                <li><span class="cidade-nome">SÃO PAULO</span> <span class="coord-text">LAT: -23.55 | LON: -46.63</span></li>
+                <li><span class="cidade-nome">ITU</span> <span class="coord-text">LAT: -23.26 | LON: -47.29</span></li>
+                <li><span class="cidade-nome">AMPARO</span> <span class="coord-text">LAT: -22.70 | LON: -46.76</span></li>
             </ul>
         </div>
 
         <div class="input-group">
             <div class="input-field">
-                <label>> 输入纬度 (y)</label>
-                <input type="number" id="input-lat" step="0.01" placeholder="例如: -23.00">
+                <label>> INSERIR LATITUDE (y)</label>
+                <input type="number" id="input-lat" step="0.01" placeholder="Ex: -23.00">
             </div>
             <div class="input-field">
-                <label>> 输入经度 (x)</label>
-                <input type="number" id="input-lon" step="0.01" placeholder="例如: -46.00">
+                <label>> INSERIR LONGITUDE (x)</label>
+                <input type="number" id="input-lon" step="0.01" placeholder="Ex: -46.00">
             </div>
         </div>
 
-        <div id="msg-status">等待数据输入...</div>
+        <div id="msg-status">AGUARDANDO INSERÇÃO DE DADOS...</div>
 
-        <button class="btn-action" onclick="validarCoordenadas()">处理坐标</button>
+        <button class="btn-action" onclick="validarCoordenadas()">Processar Coordenadas</button>
     </div>
 
     <script>
         function validarCoordenadas() {
+            // Valores corretos aproximados do Baricentro (Jundiaí)
             const targetLat = -23.17;
             const targetLon = -46.89;
-            const tolerancia = 0.05; 
+            const tolerancia = 0.05; // Margem de erro para arredondamentos
 
+            // Captura o que o usuário digitou
             let lat = parseFloat(document.getElementById('input-lat').value);
             let lon = parseFloat(document.getElementById('input-lon').value);
             let msg = document.getElementById('msg-status');
 
+            // Verifica se os campos estão vazios
             if (isNaN(lat) || isNaN(lon)) {
                 msg.className = 'erro';
-                msg.innerHTML = "[错误] 请在两个字段中输入数值。";
+                msg.innerHTML = "[ERRO] Insira valores numéricos em ambos os campos.";
                 return;
             }
 
+            // Cálculo da diferença absoluta para ver se está dentro da tolerância
             let difLat = Math.abs(lat - targetLat);
             let difLon = Math.abs(lon - targetLon);
 
             if (difLat <= tolerancia && difLon <= tolerancia) {
                 msg.className = 'sucesso';
-                msg.innerHTML = "[成功] 坐标验证通过。校准完成！正在重定向到地图...";
+                msg.innerHTML = "[SUCESSO] Coordenadas validadas. Calibração concluída! Redirecionando para o mapa...";
                 
+                // Aguarda 2 segundos e manda para a tela do resultado
                 setTimeout(function() {
-                    window.location.href = '01_resultado1cn.html';
+                    window.location.href = '01_resultado1.html';
                 }, 2000);
             } else {
                 msg.className = 'erro';
-                msg.innerHTML = "[严重错误] 坐标不正确。该点偏离了理想区域。请重新计算算术平均值。";
+                msg.innerHTML = "[FALHA CRÍTICA] Coordenadas incorretas. O ponto cai fora da área ideal. Refaça a média aritmética.";
             }
         }
     </script>
