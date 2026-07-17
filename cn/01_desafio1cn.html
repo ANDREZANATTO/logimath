@@ -1,1 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>阶段 1 - 枢纽分析</title>
+    <style>
+        body { font-family: 'Chakra Petch', sans-serif; background: #060a0f; color: #fff; padding: 50px; display: flex; justify-content: center; }
+        .card { max-width: 600px; background: #0c1219; padding: 40px; border: 1px solid #00ffcc; text-align: center; }
+        h1 { color: #00ffcc; }
+        p { color: #a0b0ba; line-height: 1.6; margin-top: 20px; }
+        input { width: 100%; padding: 12px; margin: 20px 0; background: #060a0f; border: 1px solid #444; color: #00ffcc; text-align: center; font-size: 1.1rem; }
+        button { width: 100%; padding: 15px; background: #00ffcc; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>阶段 1：网络枢纽</h1>
+        <p>输入最符合逻辑的枢纽节点字母：</p>
+        <input type="text" id="resposta" placeholder="输入节点字母">
+        <button onclick="validar()">验证决策</button>
+        <p id="feedback" style="margin-top:15px; font-weight:bold;"></p>
+    </div>
 
+    <script>
+        function validar() {
+            if(document.getElementById('resposta').value.toUpperCase() === 'V') {
+                window.location.href = "01_resultado1cn.html";
+            } else {
+                document.getElementById('feedback').innerText = "错误，请重试。";
+                document.getElementById('feedback').style.color = "#ff4d4d";
+            }
+        }
+    </script>
+</body>
+</html>
